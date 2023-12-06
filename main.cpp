@@ -3,6 +3,9 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <chrono>
+#include <thread>
+#include <atomic>
 using namespace std;
 
 string generate_uuid()
@@ -21,8 +24,7 @@ string generate_uuid()
 
 int main() {
 	int score = 0;
-	while (true) 
-	{
+	while (true) {
 		vector<string> uuids(100);
 		generate(uuids.begin(), uuids.end(), generate_uuid);
 
@@ -39,18 +41,25 @@ int main() {
 			++uuid_iter;
 		}
 
+		auto start = chrono::high_resolution_clock::now();
+
 		char guess;
 		cin >> guess;
 
-		if (guess == missing_char) 
+		auto end = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = end - start;
+		int remaining_time = 30 - static_cast<int>(elapsed.count());
+
+		if (guess == missing_char)
 		{
-			score += 30;
-			cout << "Correct! Your score is now " << score << "." << endl;
-		} else {
-			cout << "Incorrect. Your final score is " << score << "." << endl;
+			score += remaining_time;
+			cout << "Correct" << score << "." << endl;
+		} 
+		else
+		{
+			cout << "Incorrect" << score << "." <<endl;
 			break;
 		}
 	}
-
 	return 0;
 }
